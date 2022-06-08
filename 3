@@ -1,0 +1,75 @@
+ENV['RACK_ENV'] ||= 'development'
+
+require 'bundler'
+require 'matrix'
+
+Bundler.require :default, ENV['RACK_ENV'].to_sym
+
+
+require 'sinatra/base'
+require 'csv'
+
+class Application < Sinatra::Base
+
+  before do
+    if request.request_method == "POST"
+      render head: 400 unless _validate_params(params)
+      @matrix = _read_matrix(params)
+      render head: 400 unless _validate_matrix_size(@matrix)
+    end
+  end
+
+  # Let's just add some information if user ends up on the root application
+  get '/' do
+    "You should use curl command line to post a csv file like this: \n'curl -X POST -F 'file=@matrix.csv' 'http://localhost:4567/flatten'"
+  end
+
+  post '/echo' do
+   _stringify(@matrix)
+  end
+
+  post '/invert' do
+    inverted = @matrix.transpose
+    _stringify(inverted)
+  end
+
+  post '/flatten' do
+    @matrix.flatten.join(',')
+  end
+
+  post '/sum' do
+    @matrix.flatten.map(&:to_i).sum.to_s
+  end
+
+  post '/multiply' do
+    @matrix.flatten.map(&:to_i).inject(:*).to_s
+  end
+
+  def _validate_params(params)
+    raise "Inavlid params. You must inform a CSV file." unless params[:file]
+    raise "Invalid file. Could load your CSV file." unless params[:file][:tempfile]
+
+    true
+  end
+
+  def _read_matrix(params)
+    file_data = params[:file][:tempfile]
+    csv_data = CSV.read(file_data)
+    csv_data.each.to_a
+  end
+
+  def _stringify(matrix)
+    matrix.map{ |row| row.join(',') }.join("\n")
+  end
+
+  # Matrix must be square to be valid (same count of cols and rows)
+  # Let's not repeat ourselves, as Ruby has a Matrix::square? method to deal with that
+  def _validate_matrix_size(matrix)
+    mat = Matrix[*matrix]
+    raise "Invalid Matrix. Lines and cols must be of the same size." unless mat.square?
+    true
+  end
+
+end
+
+# Application.run!
