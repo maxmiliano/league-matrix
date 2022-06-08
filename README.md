@@ -61,7 +61,7 @@ bundle install
 
 Run web server
 ```
-ruby server.rb # Server will listen on http://localhost:4567
+ruby run_server.rb # Server will listen on http://localhost:4567
 ```
 
 Send request
