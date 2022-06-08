@@ -1,19 +1,20 @@
-source "https://rubygems.org"
+# frozen_string_literal: true
 
-# gem "rails"
-gem "rack"
-gem "sinatra"
+source 'https://rubygems.org'
+
+gem 'rack'
+gem 'sinatra'
 
 group :test, :development do
+  gem 'factory_bot'
   gem 'rspec'
   gem 'rspec-core'
   gem 'rspec-expectations'
   gem 'rspec-mocks'
-  # gem 'rspec-rails'
-  gem 'factory_bot'
-  gem "rubocop"
+  gem 'rubocop'
+  gem 'rubocop-rspec'
 end
 
 group :test do
-  gem "rack-test"
+  gem 'rack-test'
 end
