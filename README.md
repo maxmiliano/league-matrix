@@ -1,4 +1,5 @@
 # League Backend Challenge
+This is my solution for the Backend Challenge as part of the [League](https://league.com/)'s hiring process.
 
 The original Challenge consists of a main.go with web server written in GoLang. It accepts a single request _/echo_.
 
